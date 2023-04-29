@@ -10,12 +10,12 @@ import net.bddtrader.tradingdata.TradingData;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 
 import java.util.List;
 
 import static net.bddtrader.config.TradingDataSource.DEV;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
 
 public class WhenAClientRegistersWithBDDTrader {
 
@@ -147,7 +147,7 @@ public class WhenAClientRegistersWithBDDTrader {
         controller.register(Client.withFirstName("Sarah-Jane").andLastName("Smith").andEmail("sarah-jane@smith.com"));
 
         // WHEN
-        HttpStatus status = controller.findClientById(100L).getStatusCode();
+        HttpStatusCode status = controller.findClientById(100L).getStatusCode();
 
         // THEN
         assertThat(status).isEqualTo(HttpStatus.NOT_FOUND);
