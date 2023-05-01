@@ -7,8 +7,9 @@ import net.bddtrader.config.TradingDataSource;
 import net.bddtrader.exceptions.MissingMandatoryFieldsException;
 import net.bddtrader.portfolios.*;
 import net.bddtrader.tradingdata.TradingData;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
@@ -25,7 +26,7 @@ public class WhenAClientRegistersWithBDDTrader {
     ClientController controller = new ClientController(clientDirectory, portfolioController);
 
 
-    @Before
+    @BeforeEach
     public void resetTestData() {
         TradingData.instanceFor(DEV).reset();
     }
@@ -40,19 +41,22 @@ public class WhenAClientRegistersWithBDDTrader {
         assertThat(registeredClient).isEqualToComparingFieldByField(registeredClient);
     }
 
-    @Test(expected = MissingMandatoryFieldsException.class)
+    @Test
     public void firstNameIsMandatory() {
-        controller.register(controller.register(Client.withFirstName("").andLastName("Smith").andEmail("sarah-jane@smith.com")));
+        Assertions.assertThrows(MissingMandatoryFieldsException.class, () -> controller.register(controller.register(Client.withFirstName("").andLastName("Smith").andEmail("sarah-jane@smith.com")))
+        );
     }
 
-    @Test(expected = MissingMandatoryFieldsException.class)
+    @Test
     public void lastNameIsMandatory() {
-        controller.register(controller.register(Client.withFirstName("Sarah-Jane").andLastName("").andEmail("sarah-jane@smith.com")));
+        Assertions.assertThrows(MissingMandatoryFieldsException.class, () -> controller.register(controller.register(Client.withFirstName("Sarah-Jane").andLastName("").andEmail("sarah-jane@smith.com")))
+        );
     }
 
-    @Test(expected = MissingMandatoryFieldsException.class)
+    @Test
     public void emailIsMandatory() {
-        controller.register(Client.withFirstName("Sarah-Jane").andLastName("Smith").andEmail(""));
+        Assertions.assertThrows(MissingMandatoryFieldsException.class, () -> controller.register(Client.withFirstName("Sarah-Jane").andLastName("Smith").andEmail(""))
+        );
     }
 
     @Test
@@ -104,25 +108,29 @@ public class WhenAClientRegistersWithBDDTrader {
 
         // THEN
         assertThat(positions).hasSize(1)
-                             .contains(Position.fromTrade(Trade.buy(100000L).sharesOf("CASH").at(1L).centsEach()));
+                .contains(Position.fromTrade(Trade.buy(100000L).sharesOf("CASH").at(1L).centsEach()));
     }
 
-    @Test(expected = PortfolioNotFoundException.class)
+
     public void shouldfailIfNoPortfolioCanBeFound() {
         // GIVEN
         Client sarahJane = controller.register(Client.withFirstName("Sarah-Jane").andLastName("Smith").andEmail("sarah-jane@smith.com"));
 
         // WHEN
-        portfolioController.viewPortfolioForClient(-1L);
+        Assertions.assertThrows(PortfolioNotFoundException.class, () -> portfolioController.viewPortfolioForClient(-1L)
+        );
     }
 
-    @Test(expected = PortfolioNotFoundException.class)
+
     public void shouldfailIfNoClientForAPortfolioCanBeFound() {
         // GIVEN
         Client sarahJane = controller.register(Client.withFirstName("Sarah-Jane").andLastName("Smith").andEmail("sarah-jane@smith.com"));
 
         // WHEN
-        Portfolio clientPortfolio = portfolioController.viewPortfolio(-1L);
+        Assertions.assertThrows(PortfolioNotFoundException.class, () -> {
+                    Portfolio clientPortfolio = portfolioController.viewPortfolio(-1L);
+                }
+        );
     }
 
 

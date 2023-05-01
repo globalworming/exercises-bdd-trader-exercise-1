@@ -3,8 +3,8 @@ package net.bddtrader.acceptancetests;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import net.bddtrader.clients.Client;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +14,7 @@ import static org.hamcrest.Matchers.not;
 
 public class WhenCreatingANewClient {
 
-    @Before
+    @BeforeEach
     public void setupBaseUrl() {
         RestAssured.baseURI = "http://localhost:9000/api";
     }

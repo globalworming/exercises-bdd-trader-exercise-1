@@ -4,22 +4,22 @@ import net.bddtrader.clients.Client;
 import net.bddtrader.clients.ClientController;
 import net.bddtrader.clients.ClientDirectory;
 import net.bddtrader.config.TradingDataSource;
-import net.bddtrader.portfolios.*;
+import net.bddtrader.portfolios.PortfolioController;
+import net.bddtrader.portfolios.PortfolioDirectory;
 import net.bddtrader.tradingdata.TradingData;
-import net.serenitybdd.junit.runners.SerenityParameterizedRunner;
-import net.thucydides.junit.annotations.Qualifier;
-import net.thucydides.junit.annotations.TestData;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import net.serenitybdd.junit5.SerenityJUnit5Extension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.stream.Stream;
 
 import static net.bddtrader.config.TradingDataSource.DEV;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SerenityParameterizedRunner.class)
+@ExtendWith(SerenityJUnit5Extension.class)
 public class WhenDifferentTypesOfClientsRegister {
 
     ClientDirectory clientDirectory = new ClientDirectory();
@@ -27,35 +27,25 @@ public class WhenDifferentTypesOfClientsRegister {
     PortfolioController portfolioController = new PortfolioController(TradingDataSource.DEV, portfolioDirectory);
     ClientController controller = new ClientController(clientDirectory, portfolioController);
 
-    public WhenDifferentTypesOfClientsRegister(String firstName, String lastName) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+
+    public static Stream<Arguments> aClientRegisters() {
+        return Stream.of(
+                Arguments.of("Sarah-Jane", "Smith"),
+                Arguments.of("Bill", "Oddie"),
+                Arguments.of("Tim", "Brooke-Taylor")
+        );
     }
 
-    @TestData
-    public static Collection<Object[]> testData(){
-        return Arrays.asList(new Object[][]{
-                {"Sarah-Jane",     "Smith"},
-                {"Bill",  "Oddie"},
-                {"Tim", "Brooke-Taylor"},
-        });
-    }
 
-    private final String firstName;
-    private final String lastName;
 
-    @Qualifier
-    public String description() {
-        return "for " + firstName +" " + lastName;
-    }
-
-    @Before
+    @BeforeEach
     public void resetTestData() {
         TradingData.instanceFor(DEV).reset();
     }
 
-    @Test
-    public void aClientRegisters() {
+    @ParameterizedTest(name = "{index} for {0} {1}")
+    @MethodSource
+    public void aClientRegisters(String firstName, String lastName) {
 
         // WHEN
         Client registeredClient = controller.register(Client.withFirstName(firstName).andLastName(lastName).andEmail("sarah-jane@smith.com"));

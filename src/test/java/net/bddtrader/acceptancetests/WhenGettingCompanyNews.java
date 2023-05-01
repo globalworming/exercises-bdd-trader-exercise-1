@@ -1,14 +1,14 @@
 package net.bddtrader.acceptancetests;
 
 import io.restassured.RestAssured;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.Matchers.*;
 
 public class WhenGettingCompanyNews {
 
-    @Before
+    @BeforeEach
     public void prepare_rest_config() {
         RestAssured.baseURI = "http://localhost:9000/api/";
     }

@@ -6,8 +6,9 @@ import net.bddtrader.portfolios.Portfolio;
 import net.bddtrader.portfolios.PortfolioWithPositions;
 import net.bddtrader.tradingdata.PriceReader;
 import net.bddtrader.tradingdata.TradingData;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static net.bddtrader.config.TradingDataSource.DEV;
 import static net.bddtrader.portfolios.Trade.buy;
@@ -19,9 +20,9 @@ import static org.mockito.Mockito.when;
 
 public class WhenCreatingAPortfolio {
 
-    Portfolio portfolio = new Portfolio(1L,1L);
+    Portfolio portfolio = new Portfolio(1L, 1L);
 
-    @Before
+    @BeforeEach
     public void resetTestData() {
         TradingData.instanceFor(DEV).reset();
     }
@@ -63,9 +64,9 @@ public class WhenCreatingAPortfolio {
         assertThat(portfolio.calculateProfitUsing(priceReader)).isEqualTo(500.00);
     }
 
-    @Test(expected = InsufficientFundsException.class)
+    @Test
     public void buyerMustHaveEnoughCashToMakeAPurchase() {
-        portfolio.placeOrder(buy(20000L).sharesOf("IBM").at(100L).centsEach());
+        Assertions.assertThrows(InsufficientFundsException.class, () -> portfolio.placeOrder(buy(20000L).sharesOf("IBM").at(100L).centsEach()));
     }
 
     @Test

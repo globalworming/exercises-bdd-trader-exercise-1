@@ -3,13 +3,13 @@ package net.bddtrader.acceptancetests;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import net.bddtrader.clients.Client;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.Matchers.equalTo;
 
 public class WhenUpdatingAndDeletingAClient {
-    @Before
+    @BeforeEach
     public void setupBaseUrl() {
         RestAssured.baseURI = "http://localhost:9000/api";
     }
